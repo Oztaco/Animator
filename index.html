@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+<head>
+	<title>Animator</title>
+
+	<style>
+		* {
+			margin: 0px;
+			padding: 0px;
+		}
+		.clr {
+			clear: both;
+			height: 0;
+			width: 0;
+		}
+		body {
+			overflow: hidden;
+		}
+		canvas {
+			background-color: #B97FE5;
+			image-rendering: pixelated;
+			cursor: crosshair;
+		}
+		canvas#drawingCanvas {
+			width: 640px;
+			height: 340px;
+		}
+		.sideBar {
+			display: block;
+			width: 125px;
+			float: left;
+			background: #353535;
+			height: 90%;
+			height: calc(100vh - 126px);
+			border-right: 1px solid #1e1e1e;
+			position: relative;
+		}
+		.toolButton {
+			height: 45px;
+			width: 45px;
+			margin-left: 11px;
+			margin-top: 9px;
+			padding: 0;
+			display: block;
+			float: left;
+		}
+		.workArea {
+			height: 90%;
+			height: calc(100vh - 126px);
+			width: 100%;
+			background: #282828;
+			touch-action: none;
+		}
+		#drawingCanvas {
+			display: block;
+			margin: auto;
+			position: relative;
+			top: 10vh;
+			outline: 1px solid #444;
+		}
+		.bottomBar {
+			height: 126px;
+			width: 100%;
+			background: #404040;
+		}
+		.timelineButtonBar {
+			padding: 6px;
+			border-top: 1px solid #1e1e1e;
+			border-bottom: 1px solid #2f2f2f;
+		}
+		button {
+			background-color: #484848;
+			color: #ccc;
+			border: 1px solid #585858;
+			padding: 3px 6px;
+			border-radius: 3px;
+		}
+		button:hover {
+			background: #545454;
+			border-color: #686868;
+		}
+		#timelineCanvas {
+			height: 90px;
+			width: 100%;
+		}
+
+		.colorPalette.vertical {
+			width: 125px;
+			height: 203px;
+		}
+
+		.sideBar .colorPalette {
+			display: block;
+			position: absolute;
+			bottom: 0;
+			opacity: 0.5;
+			transition: 0.3s opacity;
+		}
+		.sideBar:hover .colorPalette {
+			opacity: 1;
+		}
+
+		.sideBar p {
+			display: block;
+			color: #e1e1e1;
+			font-family: tahoma;
+			font-size: 14px;
+			padding: 12px 10px 0px 10px;
+		}
+
+		.sliderContainer {
+			padding: 0 11px;
+		}
+		.sideBarSlider {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 100%;
+			height: 8px;
+			background: #535353;
+			outline: none;
+			opacity: 0.7;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
+			margin: 20px 0;
+			border-radius: 4px;
+			border: 1px solid #222;
+		}
+		.sideBarSlider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 25px;
+			height: 25px;
+			background: #939393;
+			cursor: pointer;
+			border-radius: 50%;
+			border: 1px solid #222;
+		}
+		.sideBarSlider::-moz-range-thumb {
+			width: 25px;
+			height: 25px;
+			background: #939393;
+			cursor: pointer;
+			border-radius: 50%;
+			border: 1px solid #222;
+		}
+	</style>
+
+	<script type="text/javascript" src="js/user.js"></script>
+	<script>
+		window.addEventListener('load', function () {
+			var start = {};
+			var end = {};
+			var tracking = false;
+			var thresholdTime = 500;
+			var thresholdDistance = 100;
+			var o = document.getElementById('workArea');
+			gestureStart = function (e) {
+				tracking = true;
+				/* Hack - would normally use e.timeStamp but it's whack in Fx/Android */
+				start.t = new Date().getTime();
+				start.x = e.clientX;
+				start.y = e.clientY;
+				mouse.leftButton = true;
+				mouse.x = e.clientX;
+				mouse.y = e.clientY;
+				document.getElementById('drawingCanvas').style.cursor = 'none';
+			};
+			gestureMove = function (e) {
+				if (tracking) {
+					e.preventDefault();
+					end.x = e.clientX;
+					end.y = e.clientY;
+					mouse.x = e.clientX;
+					mouse.y = e.clientY;
+				console.log(e.pressure);
+
+				}
+			}
+			gestureEnd = function (e) {
+				mouse.leftButton = false;
+				e.preventDefault();
+				if (tracking) {
+					tracking = false;
+					var now = new Date().getTime();
+					var deltaTime = now - start.t;
+					var deltaX = end.x - start.x;
+					var deltaY = end.y - start.y;
+				}
+				document.getElementById('drawingCanvas').style.cursor = 'crosshair';
+			}
+
+			o.addEventListener('pointerdown', gestureStart, false);
+			o.addEventListener('pointermove', gestureMove, false);
+			o.addEventListener('pointerup', gestureEnd, false);
+			o.addEventListener('pointerleave', gestureEnd, false);
+			o.addEventListener('pointercancel', gestureEnd, false);
+
+		}, false);
+	</script>
+</head>
+<body onload="init();">
+	<div class="sideBar">
+		<button class="toolButton">Pen</button>
+		<button class="toolButton">Pen</button>
+		<button class="toolButton">Pen</button>
+		<button class="toolButton">Pen</button>
+		<button class="toolButton">Pen</button>
+		<button class="toolButton">Pen</button>
+		<button class="toolButton">Pen</button>
+		<button class="toolButton">Pen</button>
+		<br class="clr" />
+		<p id="penSizeIndicator">Pen Size:</p>
+		<div class="sliderContainer">
+			<input oninput="setPenSize(event, this)" type="range" min="1" max="100" value="5" class="sideBarSlider" id="penSizeSlider">
+		</div>
+		<canvas id="sideBarPalette" class="colorPalette vertical" onclick="setPenColor(event, this)"></canvas>
+	</div>
+	<div class="workArea" id="workArea">
+		<canvas id="drawingCanvas" height="720" width="1280" oncontextmenu="return false"></canvas>
+	</div>
+	<div class="bottomBar">
+		<div class="timelineButtonBar">
+			<button onclick="selectPrevFrame()">Previous</button>
+			<button onclick="selectNextFrame()">Next</button>
+			<button onclick="togglePlayAnime()">Play</button>
+			<button onclick="addBlankFrameAtEnd(frameContainer)">Add</button>
+			<button>-</button>
+			<button onclick="deleteSelectedFrame(frameContainer)">Delete</button>
+			<button onclick="addFrameAfterSelected(frameContainer)">Add After</button>
+			<button onclick="addFrameBeforeSelected(frameContainer)">Add Before</button>
+			<button onclick="dupFrameAfterSelected(frameContainer)">Dup After</button>
+			<button onclick="dupFrameBeforeSelected(frameContainer)">Dup Before</button>
+		</div>
+		<div class="timelineWrapper">
+			<canvas id="timelineCanvas" height="160" width="1120" oncontextmenu="return false"></canvas>
+		</div>
+	</div>
+	<img id="blah" />
+	<p id="keyholder" style="display: none;">Keys: </p>
+</body>
+</html>
