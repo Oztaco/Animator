@@ -710,7 +710,8 @@ preferences = {
 		col: 12,
 		color: '#000'
 	},
-	penSize: 5
+	penSize: 5,
+	animSpeed: 5
 }
 
 
@@ -968,7 +969,7 @@ scene("animate", {
 		lastT = 0;
 	},
 	update: function() {
-		if (performance.now() - lastT > 190) {
+		if (performance.now() - lastT > 1000 / preferences.animSpeed) {
 			lastT = performance.now();
 			frameContainer.selected++;
 			if (frameContainer.selected >= frameContainer.list.length)
@@ -1114,6 +1115,10 @@ function setPenColor(e, self) {
 function setPenSize(e, self) {
 	preferences.penSize = self.value;
 	document.getElementById('penSizeIndicator').innerHTML = "Pen Size: " + self.value;
+}
+
+function setAnimSpeed(e, self) {
+	preferences.animSpeed = self.value;
 }
 
 

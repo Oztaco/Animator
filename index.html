@@ -143,6 +143,17 @@
 			border-radius: 50%;
 			border: 1px solid #222;
 		}
+
+		.timelineButtonBarRight {
+			float: right;
+			display: flex;
+			align-items: center;
+			padding-top: 3px;
+		}
+		.bottomBarSlider {
+			width: 140px;
+			margin: 0;
+		}
 	</style>
 
 	<script type="text/javascript" src="js/user.js"></script>
@@ -230,6 +241,9 @@
 			<button onclick="addFrameBeforeSelected(frameContainer)">Add Before</button>
 			<button onclick="dupFrameAfterSelected(frameContainer)">Dup After</button>
 			<button onclick="dupFrameBeforeSelected(frameContainer)">Dup Before</button>
+			<div class="timelineButtonBarRight">
+				<input oninput="setAnimSpeed(event, this)" type="range" min="1" max="20" value="5" class="sideBarSlider bottomBarSlider" id="animSpeedSlider">
+			</div>
 		</div>
 		<div class="timelineWrapper">
 			<canvas id="timelineCanvas" height="160" width="1120" oncontextmenu="return false"></canvas>
